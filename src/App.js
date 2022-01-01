@@ -1,25 +1,63 @@
-import logo from './logo.svg';
-import './App.css';
+import { createStore } from 'redux'
+import noteReducer, { createNote, toggleImportanceDispatchObj } from "./reducers/noteReducer"
 
-function App() {
+import { useSelector, useDispatch } from 'react-redux'
+
+import NewNote from "./NewNote"
+import Notes from "./Notes"
+
+const store = createStore(noteReducer)
+
+store.dispatch({
+  type: 'NEW_NOTE',
+  data: {
+    content: 'the app state is in redux store',
+    important: true,
+    id: 1
+  }
+})
+
+store.dispatch({
+  type: 'NEW_NOTE',
+  data: {
+    content: 'state changes are made with actions',
+    important: false,
+    id: 2
+  }
+})
+
+store.dispatch({
+  type: 'TOGGLE_IMPORTANCE',
+  data: {
+    id: 2
+  }
+})
+
+
+const App = () => {
+
+  const dispatch = useDispatch()
+  const notes = useSelector(state => state)
+
+
+  const submitHandler = (e) => {
+    e.preventDefault()
+    const inputValue = e.target.newnote.value
+
+    dispatch(createNote(inputValue))
+    e.target.newnote.value = ''
+  }
+
+  const toggleImportance = (id) => {
+    dispatch(toggleImportanceDispatchObj(id))
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <NewNote />
+      <Notes />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
